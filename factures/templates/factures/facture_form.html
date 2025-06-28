@@ -59,10 +59,10 @@
     </div>
     <div class="col-md-2">
       <input type="hidden" name="index" id="ligne-index" value="0">
-      <button type="submit" class="btn btn-primary">Ajouter</button>
+      <button type="submit" class="btn btn-primary">➕ Ajouter</button>
     </div>
   </form>
-  <a href="{% url 'index' %}" class="btn btn-secondary mt-2">Retour</a>
+  <a href="{% url 'index' %}" class="btn btn-secondary mt-2">◄ Retour</a>
   <script>
       // Incrémente automatiquement l'index pour chaque ligne ajoutée
       document.addEventListener("htmx:afterRequest", function () {

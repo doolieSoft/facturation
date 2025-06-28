@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
   <h2>Prestations</h2>
-  <a href="{% url 'prestation_create' %}" class="btn btn-primary mb-3">Ajouter un type de prestation</a>
+  <a href="{% url 'prestation_create' %}" class="btn btn-primary mb-3">➕ Ajouter un type de prestation</a>
   <table class="table table-striped">
     <thead>
     <tr>
@@ -18,12 +18,12 @@
         <td>{{ prestation.prix }}</td>
         <td>{{ prestation.tva }}</td>
         <td>
-          <a href="{% url 'prestation_update' prestation.pk %}" class="btn btn-sm btn-warning">Modifier</a>
-          <a href="{% url 'prestation_delete' prestation.pk %}" class="btn btn-sm btn-danger">Supprimer</a>
+          <a href="{% url 'prestation_update' prestation.pk %}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+          <a href="{% url 'prestation_delete' prestation.pk %}" class="btn btn-sm btn-danger">🗑️ Supprimer</a>
         </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
-  <a href="{% url 'index' %}" class="btn btn-secondary mt-2">Retour</a>
+  <a href="{% url 'index' %}" class="btn btn-secondary mt-2">◄ Retour</a>
 {% endblock %}

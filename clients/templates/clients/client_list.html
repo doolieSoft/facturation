@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
   <h2>Clients</h2>
-  <a href="{% url 'client_create' %}" class="btn btn-primary mb-3">Ajouter un client</a>
+  <a href="{% url 'client_create' %}" class="btn btn-primary mb-3">➕ Ajouter un client</a>
   <table class="table table-striped">
     <thead>
     <tr>
@@ -20,12 +20,12 @@
         <td>{{ client.telephone }}</td>
         <td>{{ client.email }}</td>
         <td>
-          <a href="{% url 'client_update' client.pk %}" class="btn btn-sm btn-warning">Modifier</a>
-          <a href="{% url 'client_delete' client.pk %}" class="btn btn-sm btn-danger">Supprimer</a>
+          <a href="{% url 'client_update' client.pk %}" class="btn btn-sm btn-warning">✏️ Modifier</a>
+          <a href="{% url 'client_delete' client.pk %}" class="btn btn-sm btn-danger">🗑️ Supprimer</a>
         </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
-  <a href="{% url 'index' %}" class="btn btn-secondary mt-2">Retour</a>
+  <a href="{% url 'index' %}" class="btn btn-secondary mt-2">◄ Retour</a>
 {% endblock %}
