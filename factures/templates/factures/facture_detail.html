@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Facture #{{ facture.id }}</h2>
+  <p><strong>Client :</strong> {{ facture.client.nom }}</p>
+  <p><strong>Date :</strong> {{ facture.date }}</p>
+
+  <h4>Prestations :</h4>
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th>Description</th>
+      <th>Quantité</th>
+      <th>Prix unitaire</th>
+      <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for ligne in facture.lignes.all %}
+      <tr>
+        <td>{{ ligne.prestation.description }}</td>
+        <td>{{ ligne.quantite }}</td>
+        <td>{{ ligne.prestation.prix }} €</td>
+        <td>{{ ligne.montant_tvac|floatformat:2 }} €</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <p><strong>Total TVAC :</strong> {{ facture.total_tvac|floatformat:2 }} €</p>
+  <a href="{% url 'facture_create' %}" class="btn btn-secondary">Nouvelle facture</a>
+  <a href="{% url 'index' %}" class="btn btn-secondary mt-2">Retour</a>
+{% endblock %}

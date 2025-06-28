@@ -1,0 +1,13 @@
+<tr>
+  <td>
+    <input type="hidden" name="lignes-{{ index }}-prestation_id" value="{{ prestation.id }}">
+    {{ prestation.description }}
+  </td>
+  <td>
+    <input type="hidden" name="lignes-{{ index }}-quantite" value="{{ quantite }}">
+    {{ quantite }}
+  </td>
+  <td>
+    <button type="button" class="btn btn-danger btn-sm remove-prestation">Supprimer</button>
+  </td>
+</tr>

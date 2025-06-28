@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Accueil de la facturation</h1>
+
+  <ul class="list-group">
+    <li class="list-group-item">
+      <a href="{% url 'facture_create' %}">➕ Ajouter une facture</a>
+    </li>
+    <li class="list-group-item">
+      <a href="{% url 'facture_list' %}">📄 Lister les factures</a>
+    </li>
+    <li class="list-group-item">
+      <a href="{% url 'client_list' %}">👥 Gérer les clients</a>
+    </li>
+    <li class="list-group-item">
+      <a href="{% url 'prestation_list' %}">⚙️ Gérer les types de prestations</a>
+    </li>
+  </ul>
+{% endblock %}

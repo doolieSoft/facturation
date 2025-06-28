@@ -1,0 +1,10 @@
+<form
+    method="post"
+    hx-post="{% url 'prestation_create_ajax' %}"
+    hx-target="#prestation-select"
+    hx-swap="outerHTML"
+>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Créer</button>
+</form>

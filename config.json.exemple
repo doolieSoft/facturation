@@ -1,0 +1,14 @@
+{
+  "entreprise": {
+    "nom": "ABCD",
+    "adresse": [
+      "Rue des coquelicots",
+      "1000 Bruxelles",
+      "Belgique"
+    ],
+    "tva": "BE0123.456.789",
+    "telephone": "+32 0123 456 789",
+    "email": "info@abcd.be",
+    "site_web": "https://www.example.be"
+  }
+}

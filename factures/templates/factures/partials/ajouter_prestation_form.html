@@ -1,0 +1,13 @@
+<form hx-post="{% url 'facture_ajouter_prestation' %}" hx-target="#prestations-list" hx-swap="beforeend" class="form-inline mb-3">
+  {% csrf_token %}
+  <select name="prestation_id" class="form-select me-2" required>
+    <option value="" disabled selected>Choisir une prestation</option>
+    {% for prestation in prestations %}
+      <option value="{{ prestation.id }}">{{ prestation.description }}</option>
+    {% endfor %}
+  </select>
+
+  <input type="number" name="quantite" class="form-control me-2" min="1" value="1" required>
+
+  <button type="submit" class="btn btn-primary">Ajouter</button>
+</form>

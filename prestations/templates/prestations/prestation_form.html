@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <h2>{% if object %}Modifier{% else %}Ajouter{% endif %} un type de prestation</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-success mt-2">Enregistrer</button>
+  </form>
+
+  <a href="{% url 'prestation_list' %}" class="btn btn-secondary mt-2">Retour</a>
+{% endblock %}

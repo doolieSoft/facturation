@@ -1,0 +1,5 @@
+<select name="prestation" id="prestation-select" class="form-select">
+  {% for prestation in prestations %}
+    <option value="{{ prestation.id }}">{{ prestation.description }}</option>
+  {% endfor %}
+</select>

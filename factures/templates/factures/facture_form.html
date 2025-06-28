@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h2>Créer une facture</h2>
+
+  <!-- Formulaire principal : Facture -->
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <!-- On soumettra uniquement la facture + ses lignes -->
+    <div id="prestations-list">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Prestation</th>
+          <th>Quantité</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="liste-lignes">
+        <!-- HTMX insérera ici les lignes ajoutées dynamiquement -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Champ de gestion manuelle du nombre de lignes si tu utilises un formset -->
+    <input type="hidden" name="total_lignes" id="total-lignes" value="0">
+
+    <button type="submit" class="btn btn-success mt-3">Enregistrer la facture</button>
+  </form>
+
+  <hr>
+
+  <!-- Formulaire HTMX séparé pour ajouter une prestation -->
+  <h4>Ajouter une prestation existante</h4>
+  <form
+    method="post"
+    hx-post="{% url 'facture_ajouter_prestation' %}"
+    hx-target="#liste-lignes"
+    hx-swap="beforeend"
+    class="row g-2 align-items-end"
+    id="ajouter-prestation-form"
+  >
+    {% csrf_token %}
+    <div class="col-md-6">
+      <label for="prestation_id">Prestation</label>
+      <select name="prestation_id" id="prestation_id" class="form-select" required>
+        <option value="" disabled selected>Choisir une prestation</option>
+        {% for prestation in prestations %}
+          <option value="{{ prestation.id }}">{{ prestation.description }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label for="quantite">Quantité</label>
+      <input type="number" name="quantite" id="quantite" class="form-control" value="1" min="1" required>
+    </div>
+    <div class="col-md-2">
+      <input type="hidden" name="index" id="ligne-index" value="0">
+      <button type="submit" class="btn btn-primary">Ajouter</button>
+    </div>
+  </form>
+  <a href="{% url 'index' %}" class="btn btn-secondary mt-2">Retour</a>
+  <script>
+      // Incrémente automatiquement l'index pour chaque ligne ajoutée
+      document.addEventListener("htmx:afterRequest", function () {
+          const input = document.getElementById("ligne-index");
+          const count = parseInt(input.value);
+          input.value = count + 1;
+
+          const totalInput = document.getElementById("total-lignes");
+          if (totalInput) {
+              totalInput.value = count + 1;
+          }
+      });
+
+      // Supprimer une ligne
+      document.addEventListener("click", function (e) {
+          if (e.target.classList.contains("remove-prestation")) {
+              e.target.closest("tr").remove();
+          }
+      });
+  </script>
+
+{% endblock %}
