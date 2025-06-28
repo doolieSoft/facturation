@@ -11,6 +11,8 @@
       <th>Description</th>
       <th>Quantité</th>
       <th>Prix unitaire</th>
+      <th>Coût Unitaire</th>
+      <th>Marge (€)</th>
       <th>Total</th>
     </tr>
     </thead>
@@ -19,7 +21,9 @@
       <tr>
         <td>{{ ligne.prestation.description }}</td>
         <td>{{ ligne.quantite }}</td>
-        <td>{{ ligne.prestation.prix }} €</td>
+        <td>{{ ligne.prix_unitaire }} €</td>
+        <td>{{ ligne.cout_unitaire|default:"-" }}</td>
+        <td>{% if ligne.marge %}{{ ligne.marge|floatformat:2 }} €{% else %}-{% endif %}</td>
         <td>{{ ligne.montant_tvac|floatformat:2 }} €</td>
       </tr>
     {% endfor %}
@@ -27,6 +31,7 @@
   </table>
 
   <p><strong>Total TVAC :</strong> {{ facture.total_tvac|floatformat:2 }} €</p>
+  <p><strong>Marge totale : </strong>{{ total_marge|floatformat:2 }} €</p>
   <a href="{% url 'facture_create' %}" class="btn btn-secondary">Nouvelle facture</a>
   <a href="{% url 'index' %}" class="btn btn-secondary mt-2">◄ Retour</a>
 {% endblock %}

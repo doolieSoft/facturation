@@ -16,6 +16,8 @@
         <tr>
           <th>Prestation</th>
           <th>Quantité</th>
+          <th>Coût unitaire</th>
+          <th>Prix unitaire</th>
           <th>Actions</th>
         </tr>
         </thead>
@@ -30,9 +32,6 @@
 
     <button type="submit" class="btn btn-success mt-3">Enregistrer la facture</button>
   </form>
-
-  <hr>
-
   <!-- Formulaire HTMX séparé pour ajouter une prestation -->
   <h4>Ajouter une prestation existante</h4>
   <form
@@ -49,7 +48,7 @@
       <select name="prestation_id" id="prestation_id" class="form-select" required>
         <option value="" disabled selected>Choisir une prestation</option>
         {% for prestation in prestations %}
-          <option value="{{ prestation.id }}">{{ prestation.description }}</option>
+          <option value="{{ prestation.id }}" data-prix="{{ prestation.prix }}">{{ prestation.description }}</option>
         {% endfor %}
       </select>
     </div>
@@ -58,10 +57,24 @@
       <input type="number" name="quantite" id="quantite" class="form-control" value="1" min="1" required>
     </div>
     <div class="col-md-2">
+      <label for="cout_unitaire">Coût unitaire</label>
+      <input type="number" name="cout_unitaire" id="cout_unitaire" class="form-control me-2" min="0" step="0.01"
+             placeholder="Coût unitaire" required>
+    </div>
+    <div class="col-md-2">
+      <label for="prix_unitaire">Prix unitaire</label>
+      <input type="number" name="prix_unitaire" id="prix_unitaire" class="form-control me-2" min="0" step="0.01"
+             placeholder="Prix unitaire" required>
+    </div>
+    <div class="col-md-2">
       <input type="hidden" name="index" id="ligne-index" value="0">
       <button type="submit" class="btn btn-primary">➕ Ajouter</button>
     </div>
+    <small id="marge-warning" class="text-danger mt-1" style="display:none;"></small>
   </form>
+
+  <hr>
+
   <a href="{% url 'index' %}" class="btn btn-secondary mt-2">◄ Retour</a>
   <script>
       // Incrémente automatiquement l'index pour chaque ligne ajoutée
@@ -83,5 +96,72 @@
           }
       });
   </script>
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const selectPrestation = document.getElementById('prestation_id');
+          const inputCoutUnitaire = document.getElementById('cout_unitaire');
+          const inputPrixUnitaire = document.getElementById('prix_unitaire');
 
+          if (selectPrestation && inputCoutUnitaire) {
+              selectPrestation.addEventListener('change', function () {
+                  const optionSelected = selectPrestation.options[selectPrestation.selectedIndex];
+                  const prix = optionSelected.getAttribute('data-prix');
+                  if (prix !== null) {
+                      inputCoutUnitaire.value = prix;
+                      inputPrixUnitaire.value = prix;
+                  } else {
+                      inputCoutUnitaire.value = '';
+                      inputPrixUnitaire.value = '';
+                  }
+              });
+          }
+      });
+  </script>
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const selectPrestation = document.getElementById('prestation_id');
+          const inputCoutUnitaire = document.getElementById('cout_unitaire');
+          const inputPrixUnitaire = document.getElementById('prix_unitaire');  // <- ton input prix unitaire
+          const warningEl = document.getElementById('marge-warning');
+
+          function verifierMarge() {
+              if (!selectPrestation || !inputCoutUnitaire || !inputPrixUnitaire || !warningEl) return;
+
+              const optionSelected = selectPrestation.options[selectPrestation.selectedIndex];
+              const prixUnitaire = parseFloat(inputPrixUnitaire.value);
+              const coutUnitaire = parseFloat(inputCoutUnitaire.value);
+
+              if (isNaN(prixUnitaire) || isNaN(coutUnitaire)) {
+                  warningEl.style.display = 'none';
+                  warningEl.textContent = '';
+                  return;
+              }
+
+              if (coutUnitaire >= prixUnitaire) {
+                  warningEl.style.display = 'block';
+                  warningEl.textContent = "⚠️ Attention : marge nulle ou négative";
+              } else {
+                  warningEl.style.display = 'none';
+                  warningEl.textContent = '';
+              }
+          }
+
+          // Au changement de prestation, mettre à jour cout_unitaire et prix_unitaire et vérifier marge
+          selectPrestation.addEventListener('change', function () {
+              const optionSelected = selectPrestation.options[selectPrestation.selectedIndex];
+              const prix = optionSelected.getAttribute('data-prix');
+
+              inputCoutUnitaire.value = prix || '';
+              inputPrixUnitaire.value = prix || '';
+              verifierMarge();
+          });
+
+          // À chaque changement dans cout_unitaire ou prix_unitaire, on vérifie la marge
+          inputCoutUnitaire.addEventListener('input', verifierMarge);
+          inputPrixUnitaire.addEventListener('input', verifierMarge);
+
+          // Vérification initiale au chargement
+          verifierMarge();
+      });
+  </script>
 {% endblock %}

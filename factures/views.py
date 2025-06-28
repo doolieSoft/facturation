@@ -16,7 +16,17 @@ from .utils import generer_pdf_facture
 class FactureDetailView(DetailView):
     model = Facture
     template_name = "factures/facture_detail.html"
-    context_object_name = "facture"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        facture = self.object
+        lignes = facture.lignes.all()
+
+        # Calcul marges totales
+        total_marge = sum((l.marge() or 0) for l in lignes)
+        context["total_marge"] = total_marge
+        context["lignes"] = lignes
+        return context
 
 class FactureCreateView(CreateView):
     model = Facture
@@ -52,6 +62,8 @@ class FactureCreateView(CreateView):
         for i in range(total_lignes):
             prestation_id = request.POST.get(f"lignes-{i}-prestation_id")
             quantite = request.POST.get(f"lignes-{i}-quantite")
+            cout_unitaire = request.POST.get(f"lignes-{i}-cout_unitaire")
+            prix_unitaire = request.POST.get(f"lignes-{i}-prix_unitaire")
 
             if prestation_id and quantite:
                 try:
@@ -60,7 +72,8 @@ class FactureCreateView(CreateView):
                         facture=facture,
                         prestation=prestation,
                         quantite=int(quantite),
-                        prix_unitaire=prestation.prix,
+                        prix_unitaire=prix_unitaire,
+                        cout_unitaire=cout_unitaire,
                         tva=prestation.tva  # assuming prestation has a 'tva' field
                     )
                 except Prestation.DoesNotExist:
@@ -74,12 +87,16 @@ class FactureAjouterPrestationView(View):
     def post(self, request, *args, **kwargs):
         prestation_id = request.POST.get("prestation_id")
         quantite = int(request.POST.get("quantite", 1))
+        cout_unitaire = request.POST.get("cout_unitaire")
+        prix_unitaire = request.POST.get("prix_unitaire")
 
         prestation = Prestation.objects.get(pk=prestation_id)
 
         # Préparer la ligne à afficher dans la liste (sans sauvegarder la facture encore)
         context = {
             "prestation": prestation,
+            "cout_unitaire": cout_unitaire,
+            "prix_unitaire": prix_unitaire,
             "quantite": quantite,
             "index": request.POST.get("index", 0),  # optionnel, si besoin d'un index unique
         }

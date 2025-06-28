@@ -8,6 +8,14 @@
     {{ quantite }}
   </td>
   <td>
+    <input type="hidden" name="lignes-{{ index }}-cout_unitaire" value="{{ cout_unitaire }}">
+    {{ cout_unitaire|floatformat:2 }} €
+  </td>
+  <td>
+    <input type="hidden" name="lignes-{{ index }}-prix_unitaire" value="{{ prix_unitaire }}">
+    {{ prix_unitaire|floatformat:2 }} €
+  </td>
+  <td>
     <button type="button" class="btn btn-danger btn-sm remove-prestation">🗑️ Supprimer</button>
   </td>
 </tr>
