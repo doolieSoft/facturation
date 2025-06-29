@@ -2,6 +2,8 @@
 
 Ce projet permet de créer des factures clients à partir de prestations définies, avec calcul de prix, gestion de marge, et génération automatique de factures PDF.
 
+[Descriptions et copies d'écrans](./descriptions.md)
+
 ## 🔧 Fonctionnalités principales
 
 - Création de factures via une interface Django.
