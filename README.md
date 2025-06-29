@@ -42,25 +42,32 @@ Lors de la sélection d’une prestation, le champ Coût unitaire est prérempli
 
 ## 📦 Installation
 
-    Cloner le projet :
-
+Cloner le projet :
+```bash
 git clone https://github.com/dooliesoft/facturation.git
+```
+
+```bash
 cd facturation
+```
 
 Créer un environnement virtuel :
-
+```bash
 python -m venv env
 source env/bin/activate
+```
 
 Installer les dépendances :
-
+```bash
 pip install -r requirements.txt
+```
 
 Appliquer les migrations :
-
+```bash
 python manage.py migrate
+```
 
 Lancer le serveur :
-
-    python manage.py runserver
-
+```bash
+python manage.py runserver
+```
