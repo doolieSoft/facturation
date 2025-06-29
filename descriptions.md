@@ -1,3 +1,3 @@
 # Gestion de Facturation - Descriptions et copies d'écrans
 
-![Image](docs/images/accueil.png)
+[![Accueil](docs/images/accueil.png)](docs/images/accueil.png)
