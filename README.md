@@ -1,4 +1,4 @@
-# 🧾 Gestion de Facturation - Django + HTMX + PDF
+# [🧾 Gestion de Facturation - Django + HTMX + PDF](https://dooliesoft.github.io/facturation/)
 
 Ce projet permet de créer des factures clients à partir de prestations définies, avec calcul de prix, gestion de marge, et génération automatique de factures PDF.
 
