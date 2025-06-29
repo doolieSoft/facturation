@@ -1,1 +1,4 @@
-remote_theme: mmistakes/minimal-mistakes@4.27.1
+title: dooliesoft/facturation
+description: Outil pour la gestion et création de factures pdf
+show_downloads: true
+theme: jekyll-theme-minimal
