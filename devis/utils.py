@@ -5,7 +5,10 @@ from decimal import Decimal
 from reportlab.lib.units import cm
 from reportlab.lib.styles import getSampleStyleSheet
 
-def charger_config(path="config.json"):
+from facturation.settings import BASE_DIR
+
+
+def charger_config(path=BASE_DIR / "config.json"):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
