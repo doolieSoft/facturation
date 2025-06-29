@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load l10n %}
 
 {% block content %}
   <h2>Créer une facture</h2>
@@ -48,7 +49,9 @@
       <select name="prestation_id" id="prestation_id" class="form-select" required>
         <option value="" disabled selected>Choisir une prestation</option>
         {% for prestation in prestations %}
+          {% localize off %}
           <option value="{{ prestation.id }}" data-prix="{{ prestation.prix }}">{{ prestation.description }}</option>
+          {% endlocalize %}
         {% endfor %}
       </select>
     </div>
