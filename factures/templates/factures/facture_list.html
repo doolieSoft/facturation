@@ -28,9 +28,9 @@
         <td>{{ facture.client.nom }}</td>
         <td>{{ facture.total_tvac|floatformat:2 }} €</td>
         <td>
-          <a href="{% url 'facture_detail' facture.pk %}" class="btn btn-sm btn-info">Voir</a>
+          <a href="{% url 'facture_detail' facture.pk %}" class="btn btn-sm btn-info"><i class="fa-solid fa-receipt"></i></a>
           {% if facture.pdf_filename %}
-            <a href="/{{ facture.pdf_filename }}" class="btn btn-sm btn-info" target="_blank">PDF</a>
+            <a href="/{{ facture.pdf_filename }}" class="btn btn-sm btn-info" target="_blank"><i class="fa-solid fa-file-pdf"></i></a>
           {% else %}
            PDF pas encore généré
           {% endif %}

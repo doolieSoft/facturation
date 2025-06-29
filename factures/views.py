@@ -71,6 +71,7 @@ class FactureCreateView(CreateView):
                     LigneFacture.objects.create(
                         facture=facture,
                         prestation=prestation,
+                        description=prestation.description,
                         quantite=int(quantite),
                         prix_unitaire=prix_unitaire,
                         cout_unitaire=cout_unitaire,

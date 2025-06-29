@@ -27,16 +27,17 @@ class Facture(models.Model):
 class LigneFacture(models.Model):
     facture = models.ForeignKey("Facture", related_name="lignes", on_delete=models.CASCADE)
     prestation = models.ForeignKey("prestations.Prestation", on_delete=models.PROTECT)
+    description = models.CharField(max_length=255)
     quantite = models.PositiveIntegerField(default=1)
     prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2)  # Prix HTVA figé
     cout_unitaire = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # coût réel
     tva = models.DecimalField(max_digits=4, decimal_places=2, default=21.0)  # TVA en pourcentage
 
     def montant_htva(self):
-        return self.prestation.prix * self.quantite
+        return self.prix_unitaire * self.quantite
 
     def montant_tva(self):
-        return self.montant_htva() * self.prestation.tva / 100
+        return self.montant_htva() * self.tva / 100
 
     @property
     def montant_tvac(self):

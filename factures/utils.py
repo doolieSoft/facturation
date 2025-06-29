@@ -152,7 +152,7 @@ def generer_pdf_facture(facture, output_path="media/factures"):
         "date": facture.date.strftime("%d/%m/%Y"),
         "lignes": [
             {
-                "description": ligne.prestation.description,
+                "description": ligne.description,
                 "quantite": ligne.quantite,
                 "prix_unitaire_unitaire": ligne.prix_unitaire,
                 "prix_unitaire": ligne.prix_unitaire * ligne.quantite,

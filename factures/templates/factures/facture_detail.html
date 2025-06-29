@@ -13,13 +13,13 @@
       <th>Prix unitaire</th>
       <th>Coût Unitaire</th>
       <th>Marge (€)</th>
-      <th>Total</th>
+      <th>Total TVAC</th>
     </tr>
     </thead>
     <tbody>
     {% for ligne in facture.lignes.all %}
       <tr>
-        <td>{{ ligne.prestation.description }}</td>
+        <td>{{ ligne.description }}</td>
         <td>{{ ligne.quantite }}</td>
         <td>{{ ligne.prix_unitaire }} €</td>
         <td>{{ ligne.cout_unitaire|default:"-" }}</td>

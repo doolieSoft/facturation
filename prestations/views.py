@@ -42,7 +42,7 @@ class PrestationListView(ListView):
     model = Prestation
     template_name = "prestations/prestation_list.html"
     context_object_name = "prestations"
-
+    ordering = ['description']  # ou '-description' pour ordre décroissant
 
 class PrestationDeleteView(DeleteView):
     model = Prestation
