@@ -2,145 +2,143 @@ import json
 import os
 from decimal import Decimal
 
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
-
+from reportlab.lib.styles import getSampleStyleSheet
 
 def charger_config(path="config.json"):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-
 def create_invoice(data, config, filename="facture.pdf"):
-    c = canvas.Canvas(filename, pagesize=A4)
-    width, height = A4
+    from reportlab.lib.pagesizes import A4
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib import colors
 
+    doc = SimpleDocTemplate(filename, pagesize=A4, rightMargin=2 * cm, leftMargin=2 * cm, topMargin=2 * cm,
+                            bottomMargin=2 * cm)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # --- Coordonnées entreprise et client côte à côte ---
     entreprise = config["entreprise"]
+    client = data["client"]
 
-    # Coordonnées entreprise
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(2 * cm, height - 2 * cm, entreprise["nom"])
-    c.setFont("Helvetica", 10)
-    y = height - 2.5 * cm
-    for ligne in entreprise["adresse"]:
-        c.drawString(2 * cm, y, ligne)
-        y -= 0.4 * cm
-    c.drawString(2 * cm, y, f"TVA : {entreprise['tva']}")
-    y -= 0.4 * cm
-    c.drawString(2 * cm, y, f"Tél : {entreprise['telephone']}")
-    y -= 0.4 * cm
-    c.drawString(2 * cm, y, f"Email : {entreprise['email']}")
-    y -= 0.4 * cm
-    c.drawString(2 * cm, y, f"Site : {entreprise['site_web']}")
+    entreprise_info = [
+        f"<b>{entreprise['nom']}</b>",
+        *entreprise["adresse"],
+        f"TVA : {entreprise['tva']}",
+        f"Tél : {entreprise['telephone']}",
+        f"Email : {entreprise['email']}",
+        f"Site : {entreprise['site_web']}"
+    ]
+    client_info = [
+        "<b>Facturé à :</b>",
+        *client["nom_et_adresse"]
+    ]
 
-    # Coordonnées client
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(12 * cm, height - 2 * cm, "Facturé à :")
-    c.setFont("Helvetica", 10)
-    y_client = height - 2.5 * cm
-    adresse_client = data["client"]["nom_et_adresse"]
-    if isinstance(adresse_client, str):
-        adresse_client = adresse_client.split("\n")
+    entreprise_para = [Paragraph(line, styles["Normal"]) for line in entreprise_info]
+    client_para = [Paragraph(line, styles["Normal"]) for line in client_info]
 
-    for ligne in adresse_client:
-        c.drawString(12 * cm, y_client, ligne)
-        y_client -= 0.4 * cm
+    coord_table = Table([
+        [entreprise_para, client_para]
+    ], colWidths=[9 * cm, 7 * cm])
 
-    # --- Encadré coordonnées ---
-    top_box = height - 1.2 * cm
-    bottom_box = min(y, y_client) - 0.4 * cm
-    c.setLineWidth(1)
-    c.rect(1.5 * cm, bottom_box, 17 * cm, top_box - bottom_box)
+    coord_table.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("BOX", (0, 0), (-1, -1), 1, colors.black),
+        ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.grey),
+        ("LEFTPADDING", (0, 0), (-1, -1), 6),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+        ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+    ]))
 
-    # Détails facture
-    c.setFont("Helvetica-Bold", 12)
-    y_position = min(y, y_client) - 1 * cm
-    c.drawString(2 * cm, y_position, f"Facture n°: {data['facture_num']}")
-    c.drawString(12 * cm, y_position, f"Date: {data['date']}")
+    elements.append(coord_table)
+    elements.append(Spacer(1, 1 * cm))
 
-    # En-tête du tableau
-    y_position -= 2 * cm
-    c.setFont("Helvetica-Bold", 10)
-    c.drawString(2 * cm, y_position, "Description")
-    c.drawString(10 * cm, y_position, "Prix HTVA")
-    c.drawString(13 * cm, y_position, "TVA %")
-    c.drawString(16 * cm, y_position, "TVAC")
+    # Infos facture
+    elements.append(Paragraph(f"<b>Facture n°:</b> {data['facture_num']}", styles['Normal']))
+    elements.append(Paragraph(f"<b>Date:</b> {data['date']}", styles['Normal']))
+    elements.append(Spacer(1, 12))
 
-    # Ligne sous l'en-tête
-    c.line(2 * cm, y_position - 0.2 * cm, 19 * cm, y_position - 0.2 * cm)
-    y_position -= 0.8 * cm
+    # En-tête du tableau + données
+    styles = getSampleStyleSheet()
 
-    # Lignes
-    c.setFont("Helvetica", 10)
+    style_table_header = ParagraphStyle(
+        "TableHeader",
+        parent=styles["Normal"],
+        alignment=1,  # 0=left, 1=center, 2=right
+        fontName="Helvetica-Bold",
+        fontSize=9,
+        spaceAfter=6,
+    )
+
+    headers = [
+        Paragraph("Description", style_table_header),
+        Paragraph("Quantité", style_table_header),
+        Paragraph("PU HTVA", style_table_header),
+        Paragraph("TVA %", style_table_header),
+        Paragraph("TVAC", style_table_header)
+    ]
+
+    table_data = [headers]  # ← première ligne : les titres
     total_htva = total_tva = total_tvac = 0
 
     for item in data["lignes"]:
         htva = item["prix_unitaire"]
+        quantite = item["quantite"]
+        pu = item["prix_unitaire_unitaire"]
         tva = htva * item["tva"] / 100
         tvac = htva + tva
+
         total_htva += htva
         total_tva += tva
         total_tvac += tvac
 
-        c.drawString(2 * cm, y_position, item["description"])
-        c.drawRightString(12 * cm, y_position, f"{htva:.2f} €")
-        c.drawRightString(15 * cm, y_position, f"{item['tva']} %")
-        c.drawRightString(19 * cm, y_position, f"{tvac:.2f} €")
-
-        # Ligne de séparation
-        y_position -= 0.4 * cm
-        c.setStrokeColor(colors.grey)
-        c.line(2 * cm, y_position + 0.2 * cm, 19 * cm, y_position + 0.2 * cm)
-
-        y_position -= 0.5 * cm
+        table_data.append([
+            item["description"],
+            str(quantite),
+            f"{pu:.2f} €",
+            f"{item['tva']} %",
+            f"{tvac:.2f} €"
+        ])
 
     # Totaux
-    y_position -= 1 * cm
-    c.setFont("Helvetica-Bold", 10)
-    c.drawRightString(12 * cm, y_position, "Total HTVA :")
-    c.drawRightString(19 * cm, y_position, f"{total_htva:.2f} €")
+    table_data.append(["", "", f"{total_htva:.2f} €", f"{total_tva:.2f} €", f"{total_tvac:.2f} €"])
 
-    y_position -= 0.5 * cm
-    c.drawRightString(12 * cm, y_position, "Total TVA :")
-    c.drawRightString(19 * cm, y_position, f"{total_tva:.2f} €")
+    table = Table(table_data, colWidths=[7*cm, 2*cm, 3*cm, 2*cm, 3*cm])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+        ('GRID', (0, 0), (-1, -1), 0.25, colors.grey),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+    ]))
 
-    y_position -= 0.5 * cm
-    c.drawRightString(12 * cm, y_position, "Total TVAC :")
-    c.drawRightString(19 * cm, y_position, f"{total_tvac:.2f} €")
+    elements.append(table)
+    elements.append(Spacer(1, 24))
 
     # Pied de page
-    footer_y = 2.5 * cm  # marge inférieure
+    elements.append(Paragraph(
+        "En vous souhaitant bonne réception de cette facture, veuillez agréer nos salutations distinguées.",
+        styles['Normal']
+    ))
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(
+        "<i>Cette facture est soumise à nos conditions générales de vente.</i>",
+        styles['Normal']
+    ))
 
-    # Texte de politesse
-    c.setFont("Helvetica", 10)
-    c.drawString(2 * cm, footer_y, "En vous souhaitant bonne réception de cette facture,")
-    footer_y -= 0.5 * cm
-    c.drawString(2 * cm, footer_y, "veuillez agréer nos salutations distinguées.")
-
-    # Espace blanc
-    footer_y -= 1 * cm
-
-    # Mention légale
-    c.setFont("Helvetica-Oblique", 8)
-    c.setFillColorRGB(0.2, 0.2, 0.2)  # gris foncé
-    c.drawString(2 * cm, footer_y, "Cette facture est soumise à nos conditions générales de vente.")
-
-    c.showPage()
-    c.save()
-
-    return filename  # <- utile pour FileResponse
-
+    doc.build(elements)
+    return filename
 
 def generer_pdf_facture(facture, output_path="media/factures"):
-    """
-    Génère un PDF pour une instance de modèle `Facture`.
-    """
     config = charger_config()
-
-    # Construire les données compatibles avec create_invoice()
     client = facture.client
+
     data = {
         "client": {
             "nom_et_adresse": [
@@ -155,6 +153,8 @@ def generer_pdf_facture(facture, output_path="media/factures"):
         "lignes": [
             {
                 "description": ligne.prestation.description,
+                "quantite": ligne.quantite,
+                "prix_unitaire_unitaire": ligne.prix_unitaire,
                 "prix_unitaire": ligne.prix_unitaire * ligne.quantite,
                 "tva": Decimal(ligne.tva),
             }
@@ -162,15 +162,11 @@ def generer_pdf_facture(facture, output_path="media/factures"):
         ]
     }
 
-    # Par défaut, dossier courant
     if output_path is None:
         output_path = "."
 
-    # Crée le dossier s'il n'existe pas
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    # Nom complet du fichier PDF
     filename = os.path.join(output_path, f"facture_{facture.pk}.pdf")
-
     return create_invoice(data, config, filename)
