@@ -2,7 +2,9 @@
 
 Ce projet permet de créer des factures clients à partir de prestations définies, avec calcul de prix, gestion de marge, et génération automatique de factures PDF.
 
-[Descriptions et démo](./descriptions.md)
+[Vidéo démo](./descriptions.md)
+
+[Live démo](https://cimeclean.pythonanywhere.com/)
 
 ## 🔧 Fonctionnalités principales
 
