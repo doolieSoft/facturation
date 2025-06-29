@@ -1,1 +1,1 @@
-python manage.py makemigrations prestations factures clients
+python manage.py makemigrations prestations factures clients devis

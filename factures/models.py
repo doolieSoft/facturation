@@ -27,7 +27,7 @@ class Facture(models.Model):
 class LigneFacture(models.Model):
     facture = models.ForeignKey("Facture", related_name="lignes", on_delete=models.CASCADE)
     prestation = models.ForeignKey("prestations.Prestation", on_delete=models.PROTECT)
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, null=True, blank=True)
     quantite = models.PositiveIntegerField(default=1)
     prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2)  # Prix HTVA figé
     cout_unitaire = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # coût réel

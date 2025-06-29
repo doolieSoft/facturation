@@ -1,0 +1,21 @@
+<tr>
+    <td>
+        <input type="hidden" name="lignes-{{ index }}-prestation_id" value="{{ prestation.id }}">
+        {{ prestation.description }}
+    </td>
+    <td>
+        <input type="hidden" name="lignes-{{ index }}-quantite" value="{{ quantite }}" min="1" class="form-control form-control-sm" required>
+        {{ quantite }}
+    </td>
+    <td>
+        <input type="hidden" name="lignes-{{ index }}-cout_unitaire" value="{{ cout_unitaire }}" step="0.01" min="0" class="form-control form-control-sm" required>
+        {{ cout_unitaire }} €
+    </td>
+    <td>
+        <input type="hidden" name="lignes-{{ index }}-prix_unitaire" value="{{ prix_unitaire }}" step="0.01" min="0" class="form-control form-control-sm" required>
+        {{ prix_unitaire }} €
+    </td>
+    <td>
+        <button type="button" class="btn btn-danger btn-sm remove-prestation">✖</button>
+    </td>
+</tr>

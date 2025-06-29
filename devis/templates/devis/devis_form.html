@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h2>Créer un devis</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+
+      <div id="prestations-list">
+        <table class="table table-sm table-bordered">
+          <thead class="table-light">
+          <tr>
+            <th>Description</th>
+            <th>Quantité</th>
+            <th>Coût unitaire</th>
+            <th>Prix unitaire</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody id="liste-lignes">
+          <!-- HTMX ajoutera dynamiquement les lignes ici -->
+          </tbody>
+        </table>
+      </div>
+
+      <input type="hidden" name="total_lignes" id="total-lignes" value="0">
+      <button type="submit" class="btn btn-success mt-3">Enregistrer le devis</button>
+    </form>
+
+    <hr>
+    <h4>Ajouter une prestation</h4>
+    <form
+      method="post"
+      hx-post="{% url 'devis_ajouter_prestation' %}"
+      hx-target="#liste-lignes"
+      hx-swap="beforeend"
+      class="row g-2 align-items-end"
+      id="ajouter-prestation-form"
+    >
+      {% csrf_token %}
+      <div class="col-md-6">
+        <label for="prestation_id">Prestation</label>
+        <select name="prestation_id" id="prestation_id" class="form-select" required>
+          <option value="" disabled selected>Choisir une prestation</option>
+          {% for prestation in prestations %}
+            <option value="{{ prestation.id }}" data-prix="{{ prestation.prix }}">{{ prestation.description }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="quantite">Quantité</label>
+        <input type="number" name="quantite" id="quantite" class="form-control" value="1" min="1" required>
+      </div>
+      <div class="col-md-2">
+        <label for="cout_unitaire">Coût unitaire</label>
+        <input type="number" name="cout_unitaire" id="cout_unitaire" placeholder="Coût unitaire" class="form-control" min="0" step="0.01" required>
+      </div>
+      <div class="col-md-2">
+        <label for="prix_unitaire">Prix unitaire</label>
+        <input type="number" name="prix_unitaire" id="prix_unitaire" placeholder="Prix unitaire" class="form-control" min="0" step="0.01" required>
+      </div>
+      <div class="col-md-2">
+        <input type="hidden" name="index" id="ligne-index" value="0">
+        <button type="submit" class="btn btn-primary">➕ Ajouter</button>
+      </div>
+    </form>
+
+    <a href="{% url 'devis_list' %}" class="btn btn-secondary mt-3">◄ Retour à la liste</a>
+  </div>
+
+  <script>
+      document.addEventListener("htmx:afterRequest", function () {
+          const indexInput = document.getElementById("ligne-index");
+          const totalInput = document.getElementById("total-lignes");
+
+          const count = parseInt(indexInput.value);
+          indexInput.value = count + 1;
+          totalInput.value = count + 1;
+      });
+
+      document.addEventListener("click", function (e) {
+          if (e.target.classList.contains("remove-prestation")) {
+              e.target.closest("tr").remove();
+          }
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+          const selectPrestation = document.getElementById('prestation_id');
+          const inputCoutUnitaire = document.getElementById('cout_unitaire');
+          const inputPrixUnitaire = document.getElementById('prix_unitaire');
+
+          if (selectPrestation && inputCoutUnitaire && inputPrixUnitaire) {
+              selectPrestation.addEventListener('change', function () {
+                  const optionSelected = selectPrestation.options[selectPrestation.selectedIndex];
+                  const prix = optionSelected.getAttribute('data-prix');
+                  if (prix !== null) {
+                      inputCoutUnitaire.value = prix.replace(',', '.');  // attention format décimal avec virgule
+                      inputPrixUnitaire.value = prix.replace(',', '.');
+                  } else {
+                      inputCoutUnitaire.value = '';
+                      inputPrixUnitaire.value = '';
+                  }
+              });
+          }
+      });
+
+  </script>
+{% endblock content %}
