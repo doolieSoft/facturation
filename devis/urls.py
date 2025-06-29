@@ -4,7 +4,7 @@ from devis.views import (ConvertirDevisEnFactureView,
                          DevisCreateView,
                          DevisAjouterPrestationView,
                          DevisDetailView,
-                         DevisListView)
+                         DevisListView, update_devis_envoye)
 
 urlpatterns = [
     path("<int:pk>/", DevisDetailView.as_view(), name="devis_detail"),
@@ -14,7 +14,7 @@ urlpatterns = [
 
 urlpatterns += [
     path("", DevisListView.as_view(), name="devis_list"),
-    #path("<int:pk>/pdf/", generer_pdf, name="generer_pdf")
+    path('devis/<int:devis_id>/update_envoye/', update_devis_envoye, name='update_devis_envoye'),
 ]
 
 urlpatterns += [

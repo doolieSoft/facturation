@@ -3,4 +3,5 @@
 db.sqlite3
 config.json
 media/factures
+media/devis
 **/__pycache__/

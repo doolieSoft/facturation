@@ -14,6 +14,7 @@ class Devis(models.Model):
     remarques = models.TextField(blank=True)
     pdf_filename = models.CharField(max_length=255, blank=True, null=True)
     facture_associee = models.OneToOneField("factures.Facture", null=True, blank=True, on_delete=models.SET_NULL)
+    envoye = models.BooleanField(default=False)
 
     def date_expiration(self):
         return self.date + timedelta(days=self.validite_jours)

@@ -1,7 +1,9 @@
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import View
+from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView
 
 from devis.forms import DevisForm, LigneDevisFormSet
@@ -137,3 +139,12 @@ class DevisAjouterPrestationView(View):
             "index": index,
         }
         return render(request, "devis/partials/ligne_prestation.html", context)
+
+@require_POST
+def update_devis_envoye(request, devis_id):
+    devis = get_object_or_404(Devis, pk=devis_id)
+    devis.envoye = 'envoye' in request.POST
+    devis.save()
+
+    html = render_to_string("devis/partials/statut_envoi.html", {'devis': devis})
+    return HttpResponse(html)
