@@ -1,13 +1,11 @@
 import json
-from datetime import date
+import os
 from decimal import Decimal
-from pprint import pprint
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
-import os
 
 
 def charger_config(path="config.json"):
@@ -164,5 +162,15 @@ def generer_pdf_facture(facture, output_path=None):
         ]
     }
 
-    filename = output_path or f"facture_{facture.pk}.pdf"
+    # Par défaut, dossier courant
+    if output_path is None:
+        output_path = "."
+
+    # Crée le dossier s'il n'existe pas
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    # Nom complet du fichier PDF
+    filename = os.path.join(output_path, f"facture_{facture.pk}.pdf")
+
     return create_invoice(data, config, filename)

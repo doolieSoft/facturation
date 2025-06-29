@@ -123,5 +123,5 @@ class FactureListView(ListView):
 
 def generer_pdf(request, pk):
     facture = Facture.objects.get(pk=pk)
-    pdf_path = generer_pdf_facture(facture)
+    pdf_path = generer_pdf_facture(facture, output_path="factures_generees")
     return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"facture_{pk}.pdf")
