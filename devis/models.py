@@ -12,7 +12,7 @@ class Devis(models.Model):
     date = models.DateField(auto_now_add=True)
     validite_jours = models.PositiveIntegerField(default=90)
     remarques = models.TextField(blank=True)
-    fichier_pdf = models.FileField(upload_to="devis/", blank=True, null=True)
+    pdf_filename = models.CharField(max_length=255, blank=True, null=True)
     facture_associee = models.OneToOneField("factures.Facture", null=True, blank=True, on_delete=models.SET_NULL)
 
     def date_expiration(self):

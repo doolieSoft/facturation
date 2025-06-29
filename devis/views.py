@@ -6,6 +6,7 @@ from django.views.generic import DetailView, ListView
 
 from devis.forms import DevisForm, LigneDevisFormSet
 from devis.models import Devis, LigneDevis
+from devis.utils import generer_pdf_devis
 from factures.models import Facture, LigneFacture
 from factures.utils import generer_pdf_facture
 from prestations.models import Prestation
@@ -107,8 +108,8 @@ class DevisCreateView(View):
                 except Prestation.DoesNotExist:
                     pass  # ou log si tu veux
 
-        #pdf_filename = generer_pdf_devis(devis)
-        #devis.pdf_filename = pdf_filename
+        pdf_filename = generer_pdf_devis(devis)
+        devis.pdf_filename = pdf_filename
         devis.save()
 
         # 3. Redirection vers la page de détail

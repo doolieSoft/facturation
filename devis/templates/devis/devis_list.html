@@ -5,46 +5,59 @@
 
   <a href="{% url 'devis_create' %}" class="btn btn-primary mb-3">➕ Nouveau devis</a>
 
-  <table class="table table-sm table-bordered align-middle">
+  <table id="devis-table" class="table table-sm table-bordered align-middle table-striped">
     <thead class="table-light">
-      <tr>
-        <th>N°</th>
-        <th>Date</th>
-        <th>Client</th>
-        <th>Remarques</th>
-        <th>PDF</th>
-        <th>Actions</th>
-      </tr>
+    <tr>
+      <th>N°</th>
+      <th>Date</th>
+      <th>Client</th>
+      <th>Remarques</th>
+      <th>Total TVAC</th>
+      <th>Actions</th>
+    </tr>
     </thead>
     <tbody>
-      {% for devis in devis_list %}
-        <tr>
-          <td>{{ devis.id }}</td>
-          <td>{{ devis.date }}</td>
-          <td>{{ devis.client.nom }}</td>
-          <td>{{ devis.remarques|truncatechars:50 }}</td>
-          <td>
-            {% if devis.pdf_filename %}
-              <a href="{{ devis.pdf_filename.url }}" target="_blank" class="btn btn-outline-danger btn-sm">
-                <i class="fa-solid fa-file-pdf"></i> PDF
-              </a>
-            {% else %}
-              <span class="text-muted">Non généré</span>
-            {% endif %}
-          </td>
-          <td>
-            <a href="{% url 'devis_detail' devis.pk %}" class="btn btn-secondary btn-sm">
-              Détail
+    {% for devis in devis_list %}
+      <tr>
+        <td>{{ devis.id }}</td>
+        <td>{{ devis.date }}</td>
+        <td>{{ devis.client.nom }}</td>
+        <td>{{ devis.remarques|truncatechars:50 }}</td>
+        <td>{{ devis.total_tvac|floatformat:2 }} €</td>
+        <td>
+          <a href="{% url 'devis_detail' devis.pk %}" class="btn btn-sm btn-info">
+            <i class="fa-solid fa-money-bill-1-wave"></i>
+          </a>
+          {% if devis.pdf_filename %}
+            <a href="/{{ devis.pdf_filename }}" target="_blank" class="btn btn-sm btn-info">
+              <i class="fa-solid fa-file-pdf"></i>
             </a>
-          </td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="6" class="text-center">Aucun devis trouvé.</td>
-        </tr>
-      {% endfor %}
+          {% else %}
+            <span class="text-muted">PDF Non généré</span>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="6" class="text-center">Aucun devis trouvé.</td>
+      </tr>
+    {% endfor %}
     </tbody>
   </table>
 
   <a href="/" class="btn btn-outline-secondary mt-3">◄ Retour à l'accueil</a>
+  <!-- DataTables JS & CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+      $(document).ready(function () {
+          $('#devis-table').DataTable({
+              paging: false, // pagination par Django
+              ordering: true,
+              info: false,
+              searching: false // désactivé pour laisser le champ "q" de Django
+          });
+      });
+  </script>
 {% endblock %}
