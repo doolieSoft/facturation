@@ -9,6 +9,7 @@ from prestations.models import Prestation
 class Facture(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
+    pdf_filename = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"Facture {self.id} - {self.client.nom}"

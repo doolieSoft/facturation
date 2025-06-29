@@ -79,6 +79,10 @@ class FactureCreateView(CreateView):
                 except Prestation.DoesNotExist:
                     pass  # ou log si tu veux
 
+        pdf_filename = generer_pdf_facture(facture)
+        facture.pdf_filename = pdf_filename
+        facture.save()
+
         # 3. Redirection vers la page de détail
         return redirect(reverse("facture_detail", args=[facture.pk]))
 

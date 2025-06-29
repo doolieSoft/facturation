@@ -133,7 +133,7 @@ def create_invoice(data, config, filename="facture.pdf"):
     return filename  # <- utile pour FileResponse
 
 
-def generer_pdf_facture(facture, output_path=None):
+def generer_pdf_facture(facture, output_path="media/factures"):
     """
     Génère un PDF pour une instance de modèle `Facture`.
     """

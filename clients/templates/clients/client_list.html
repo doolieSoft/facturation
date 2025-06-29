@@ -6,7 +6,7 @@
     <thead>
     <tr>
       <th>Nom</th>
-      <th>TVA</th>
+      <th>Numéro TVA</th>
       <th>Téléphone</th>
       <th>Email</th>
       <th>Actions</th>
@@ -16,7 +16,7 @@
     {% for client in clients %}
       <tr>
         <td>{{ client.nom }}</td>
-        <td>{{ client.tva }}</td>
+        <td>{{ client.numero_tva }}</td>
         <td>{{ client.telephone }}</td>
         <td>{{ client.email }}</td>
         <td>
