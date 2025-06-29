@@ -68,7 +68,7 @@
   </div>
 
   {% if devis.pdf_filename %}
-    <a href="{{ devis.pdf_filename.url }}" class="btn btn-outline-danger mt-3" target="_blank">
+    <a href="/{{ devis.pdf_filename }}" class="btn btn-outline-danger mt-3" target="_blank">
       <i class="fa-solid fa-file-pdf"></i> Voir le devis PDF
     </a>
   {% endif %}
