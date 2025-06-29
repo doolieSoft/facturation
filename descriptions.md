@@ -1,3 +1,3 @@
-# Gestion de Facturation - Descriptions et copies d'écrans
+# Gestion de Facturation - Descriptions et démo
 
-[![Accueil](docs/images/accueil.png)](docs/images/accueil.png)
+[![Démo](docs/videos/demo_facturation_2025_06.mp4)](docs/videos/demo_facturation_2025_06.mp4)
