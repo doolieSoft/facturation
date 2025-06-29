@@ -3,3 +3,4 @@
 db.sqlite3
 config.json
 media/factures
+**/__pycache__/
