@@ -1,6 +1,6 @@
 # [🧾 Gestion de Facturation - Django + HTMX + PDF](https://dooliesoft.github.io/facturation/)
 
-Ce projet permet de créer des factures clients à partir de prestations définies, avec calcul de prix, gestion de marge, et génération automatique de factures PDF.
+Ce projet permet de gérer facilement la facturation et les devis clients à partir de prestations configurables. Il inclut le calcul de marges, la gestion de la TVA, ainsi que la génération automatique de fichiers PDF professionnels.
 
 [Site documentation github pages](https://dooliesoft.github.io/facturation/)
 
@@ -8,31 +8,67 @@ Ce projet permet de créer des factures clients à partir de prestations défini
 
 [Live démo](https://cimeclean.pythonanywhere.com/)
 
-## 🔧 Fonctionnalités principales
+## 💼 Factures
+Création de factures via une interface Django ergonomique.
 
-- Création de factures via une interface Django.
-- Ajout dynamique de prestations avec HTMX (quantité, coût unitaire, prix unitaire).
-- Calcul automatique de la marge avec alerte si celle-ci est nulle ou négative.
-- Génération de fichiers PDF au format professionnel.
-- Export des factures PDF dans un dossier configurable.
+Ajout dynamique de lignes de prestations (HTMX).
+
+Calcul automatique de la marge par ligne.
+
+Avertissement visuel en cas de marge nulle ou négative.
+
+Génération automatique de fichiers PDF professionnels.
+
+Export configurable des fichiers PDF.
+
+## 📝 Devis
+Création de devis à partir des prestations enregistrées.
+
+Suivi de l’envoi au client (marquage comme envoyé / non envoyé).
+
+Conversion d’un devis en facture en un clic.
+
+Historique des devis pour chaque client.
+
+## 📚 Prestations
+Gestion centralisée des types de prestations.
+
+Définition du coût unitaire, du prix unitaire et du taux de TVA.
+
+Utilisation simplifiée lors de la création de factures ou de devis.
 
 ---
 
 ## 🏗 Structure du projet
+Applications principales
+- factures/ : gestion des factures.
+- devis/ : gestion des devis.
+- prestations/ : gestion des prestations disponibles.
 
-- `models.py` : modèles `Client`, `Prestation`, `Facture`, `LigneFacture`.
-- `views.py` :
-  - `FactureCreateView` : création de facture avec lignes dynamiques.
-  - `FactureAjouterPrestationView` : ajout HTMX d’une ligne de facture.
-- `templates/factures/` :
-  - `facture_form.html` : formulaire principal.
-  - `partials/ligne_prestation.html` : ligne HTML insérée dynamiquement.
-- `utils/pdf.py` : fonction `generer_pdf_facture(facture, output_path)`.
+Fichiers clés
+- models.py :
+
+  - Client, Prestation, Facture, LigneFacture, Devis, LigneDevis
+
+- views.py :
+
+  - FactureCreateView, FactureAjouterPrestationView
+  - DevisCreateView, DevisToFactureView, MarquerDevisEnvoyeView
+
+- templates/ :
+
+  - factures/, devis/, prestations/
+
+- utils/pdf.py :
+
+  -generer_pdf_facture(facture, output_path)
+
+  - generer_pdf_devis(devis, output_path)
+
 
 ---
 
-## 📄 Exemple d’utilisation de `generer_pdf_facture`
-
+## 📄 Exemple d’utilisation : generer_pdf_facture
 ```python
 from utils.pdf import generer_pdf_facture
 
@@ -40,7 +76,7 @@ facture = Facture.objects.get(pk=1)
 generer_pdf_facture(facture, output_path="exports/factures")
 ```
 
-Si le dossier "exports/factures" n'existe pas, il sera automatiquement créé. Le fichier sera nommé facture_0001.pdf
+Le fichier sera généré dans exports/factures/ (créé automatiquement si besoin), avec un nom du type facture_0001.pdf.
 
 ## ⚠️ Avertissement marge
 
@@ -51,29 +87,19 @@ Lors de la sélection d’une prestation, le champ Coût unitaire est prérempli
 Cloner le projet :
 ```bash
 git clone https://github.com/dooliesoft/facturation.git
-```
-
-```bash
 cd facturation
-```
-
-Créer un environnement virtuel :
-```bash
 python -m venv env
 source env/bin/activate
-```
-
-Installer les dépendances :
-```bash
 pip install -r requirements.txt
-```
-
-Appliquer les migrations :
-```bash
 python manage.py migrate
-```
-
-Lancer le serveur :
-```bash
 python manage.py runserver
 ```
+
+## ✅ Prochaines améliorations possibles
+- Signature électronique de devis/factures.
+
+- Tableau de bord avec statistiques de vente.
+
+- Export CSV/Excel des données.
+
+- Intégration emailing pour l'envoi automatique de documents.
